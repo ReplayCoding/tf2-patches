@@ -688,10 +688,15 @@ void Button::SetReleasedSound(const char *sound)
 	}
 }
 
+// NOTE(melvyn2) optimization disabled, beacause on gcc alone (not clang) this is wrongly optimized
 //-----------------------------------------------------------------------------
 // Purpose: Set button to be mouse clickable or not.
 //-----------------------------------------------------------------------------
-void Button::SetMouseClickEnabled(MouseCode code,bool state)
+void
+#ifdef LINUX
+__attribute__((optimize("O0")))
+#endif
+Button::SetMouseClickEnabled(MouseCode code,bool state)
 {
 	if(state)
 	{
