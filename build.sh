@@ -113,8 +113,7 @@ EOF
 }
 
 build_thirdparty "protobuf-2.6.1" "libprotobuf.a"
-#Uncommented in a later commit, when we add this
-#build_thirdparty "libedit-3.1" "libedit.a"
+build_thirdparty "libedit-3.1" "libedit.a"
 
 if [[ ! -f "./devtools/bin/vpc_linux" ]]; then
 	pushd .
