@@ -66,7 +66,7 @@ protected:
 	int				m_iLastEntIndex;
 	float			m_flLastChangeTime;
 	float			m_flTargetRetainFOV;
-	int				m_iTargetEntIndex;
+	int				m_iTargetEntIndex = 0; // Depends on being set to zero, but never set at construction!
 	bool			m_bLayoutOnUpdate;
 
 	vgui::Label				*m_pTargetNameLabel;
