@@ -83,7 +83,7 @@ if [[ -n ${CHROOT_NAME} ]]; then
 fi
 
 build_thirdparty() {
-  if [[ ! -f "thirdparty/$1/src/.libs/$2" ]]; then
+  if [[ ! -f "thirdparty/$1/$2" ]]; then
     pushd .
     cd "thirdparty/$1/"
     local EXTRA_CFLAGS=$3
@@ -112,9 +112,8 @@ EOF
   fi
 }
 
-build_thirdparty "protobuf-2.6.1" "libprotobuf.a"
-#Uncommented in a later commit, when we add this
-#build_thirdparty "libedit-3.1" "libedit.a"
+build_thirdparty "protobuf-2.6.1" "src/.libs/libprotobuf.a"
+build_thirdparty "libedit-3.1" "src/.libs/libedit.a" "-std=c99"
 
 if [[ ! -f "./devtools/bin/vpc_linux" ]]; then
 	pushd .
