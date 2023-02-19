@@ -25,14 +25,17 @@
 		}																\
 		else															\
 		{																\
-#ifndef VALVE_PURE														\
+/* fixme(replaycoding):
+ * gcc really doesn't like these ifndefs, commenting them until
+ * i can find a permanent solution */ \
+/* #ifndef VALVE_PURE														*/ \
 			Warning( "%s\n", msg.String() );							\
 			/*
 				todo(maximsmol):
 				we do not support upstream item schema
 			*/															\
 			return false;												\
-#endif																	\
+/* #endif																	*/ \
 			pVecErrors->AddToTail( msg );								\
 		}																\
 		return false;													\
