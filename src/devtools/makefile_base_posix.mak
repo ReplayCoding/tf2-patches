@@ -559,8 +559,6 @@ $(GAMEOUTPUTFILE): $(OUTPUTFILE)
 	$(QUIET_PREFIX) rm -f $(GAMEOUTPUTFILE) $(QUIET_ECHO_POSTFIX);
 	$(QUIET_PREFIX) cp $(OUTPUTFILE) $(GAMEOUTPUTFILE) $(QUIET_ECHO_POSTFIX);
 	$(QUIET_PREFIX) -$(P4_EDIT_START) $(GAMEOUTPUTFILE)$(SYM_EXT) $(P4_EDIT_END);
-	# Is this a static lib? We'll end up running gendbg on whatever this gets
-	# linked with.
 	$(QUIET_PREFIX) -if [ "$(CONFTYPE)" != "lib" ]; then\
 		$(GEN_SYM) $(GAMEOUTPUTFILE);\
 		$(STRIP) $(GAMEOUTPUTFILE);\
