@@ -39,6 +39,7 @@ src/devtools/bin/vpc_linux
 obj*/
 !src/devtools/*.mak
 !src/utils/smdlexp/smdlexp.mak
+ccache/
 
 # Specific Source build products
 client.pdb
