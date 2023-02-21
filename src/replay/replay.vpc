@@ -36,7 +36,7 @@ $Configuration
 		$SystemLibraries			"iconv;z" [$OSXALL]		
 
 		$SystemLibraries			"rt;"	[$LINUXALL]
-		$SystemLibraries			"$BASE;:libcurl-gnutls.so.4"	[$LINUXALL]
+		$SystemLibraries			"$BASE;curl-gnutls"	[$LINUXALL]
 
 		$AdditionalDependencies		"$BASE ws2_32.lib" [$WINDOWS]
 	}

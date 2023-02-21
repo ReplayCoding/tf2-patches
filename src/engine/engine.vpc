@@ -40,7 +40,7 @@ $Configuration
 		$AdditionalLibraryDirectories	"$BASE;$SRCDIR\lib\common\vc7;$SRCDIR\dx9sdk\lib" [$WINDOWS]
 		$SystemFrameworks				"Carbon;AppKit;OpenAL;CoreAudio;AudioToolbox;SystemConfiguration;Quicktime;AudioUnit" [$OSXALL]
 		$SystemLibraries				"iconv" [$OSXALL]
-		$SystemLibraries				"rt;openal;:libcurl-gnutls.so.4" [$LINUXALL]
+		$SystemLibraries				"rt;openal;curl-gnutls" [$LINUXALL]
 		$GCC_ExtraLinkerFlags			"-L/usr/lib32 -L/usr/lib" [$LINUXALL]
 	}
 }
