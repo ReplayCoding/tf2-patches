@@ -1,9 +1,9 @@
 version: "3.9"
 
 services:
-  environment:
-    - CCACHE_DIR=/ccache
   build:
+    environment:
+      - CCACHE_DIR=/ccache
     image: registry.gitlab.steamos.cloud/steamrt/scout/sdk/i386
     container_name: tf2-patches-build
     volumes:
