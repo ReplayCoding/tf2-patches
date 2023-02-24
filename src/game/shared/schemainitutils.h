@@ -25,9 +25,9 @@
 		}																\
 		else															\
 		{																\
-/* fixme(replaycoding):
- * gcc really doesn't like these ifndefs, commenting them until
- * i can find a permanent solution */ \
+/* note(replaycoding):
+ * this ifndef is invalid syntax, according to
+ * https://stackoverflow.com/questions/10074520/why-compiler-complain-about-this-macro-declaration */ \
 /* #ifndef VALVE_PURE														*/ \
 			Warning( "%s\n", msg.String() );							\
 			/*
