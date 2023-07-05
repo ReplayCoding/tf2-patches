@@ -19,6 +19,7 @@
 #include "loadcmdline.h"
 #include "byteswap.h"
 #include "worldvertextransitionfixup.h"
+#include "linuxldcompat.h"
 
 extern float		g_maxLightmapDimension;
 
@@ -1332,7 +1333,7 @@ int RunVBSP( int argc, char **argv )
 		g_nCubemapSamples = 0;
 
 		// Mark as stale since the lighting could be screwed with new ents.
-		AddBufferToPak( GetPakFile(), "stale.txt", "stale", strlen( "stale" ) + 1, false );
+		AddBufferToPak( GetPakFile(), "stale.txt", (void*)"stale", strlen( "stale" ) + 1, false );
 
 		LoadMapFile (name);
 		SetModelNumbers ();
@@ -1389,7 +1390,7 @@ int RunVBSP( int argc, char **argv )
 		{
 			LoadBSPFile_FileSystemOnly (mapFile);
 			// Mark as stale since the lighting could be screwed with new ents.
-			AddBufferToPak( GetPakFile(), "stale.txt", "stale", strlen( "stale" ) + 1, false );
+			AddBufferToPak( GetPakFile(), "stale.txt", (void*)"stale", strlen( "stale" ) + 1, false );
 		}
 
 		LoadMapFile (name);
@@ -1435,6 +1436,11 @@ main
 */
 int main (int argc, char **argv)
 {
+#ifdef LINUX
+	AwfulTerribleNoGoodHackToMakeDllLoadingWorkOnLinux(argv);
+#endif
+  PrintCommandLine(argc, argv);
+
 	// Install an exception handler.
 	SetupDefaultToolsMinidumpHandler();
 	return RunVBSP( argc, argv );

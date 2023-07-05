@@ -15,11 +15,12 @@ $Configuration
 	{
 		$AdditionalIncludeDirectories		"$BASE,..\common,..\vmpi"
 		$PreprocessorDefinitions			"$BASE;MACRO_MATHLIB;PROTECTED_THINGS_DISABLE"
+		$PreprocessorDefinitions			"$BASE;USE_SDL" [$POSIX]
 	}
 
 	$Linker
 	{
-		$AdditionalDependencies				"$BASE ws2_32.lib odbc32.lib odbccp32.lib winmm.lib"
+		$AdditionalDependencies				"$BASE ws2_32.lib odbc32.lib odbccp32.lib winmm.lib" [$WIN32]
 		$EnableLargeAddresses				"Support Addresses Larger Than 2 Gigabytes (/LARGEADDRESSAWARE)" [$WIN32]
 	}
 }
@@ -76,6 +77,7 @@ $Project "Vbsp"
 			$File	"$SRCDIR\public\filesystem_helpers.cpp"
 			$File	"$SRCDIR\public\filesystem_init.cpp"
 			$File	"..\common\filesystem_tools.cpp"
+			$File	"$SRCDIR\filesystem\linux_support.cpp" [$POSIX]
 			$File	"..\common\map_shared.cpp"
 			$File	"..\common\pacifier.cpp"
 			$File	"..\common\polylib.cpp"
@@ -83,6 +85,7 @@ $Project "Vbsp"
 			$File	"..\common\threads.cpp"
 			$File	"..\common\tools_minidump.cpp"
 			$File	"..\common\tools_minidump.h"
+			$File	"..\common\linuxldcompat.cpp" [$POSIX]
 		}
 	}
 
@@ -178,6 +181,9 @@ $Project "Vbsp"
 		$Lib fgdlib
 		$Lib mathlib
 		$Lib tier2
+		$Lib tier1
+		$ImpLib tier0
+		$ImpLib vstdlib
 		$Lib vtf
 		$Lib "$LIBCOMMON/lzma"
 	}
