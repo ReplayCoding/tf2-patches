@@ -14,6 +14,7 @@ $Configuration
 {
 	$Compiler
 	{
+		$AdditionalIncludeDirectories		"$BASE,..\common"
 		$Create/UsePrecompiledHeader		"Use Precompiled Header (/Yu)"
 		$PrecompiledHeaderFile				"$(IntDir)/vrad_launcher.pch"
 	}
@@ -31,6 +32,7 @@ $Project "Vrad_launcher"
 		-$File	"$SRCDIR\public\tier0\memoverride.cpp"
 		
 		$File	"vrad_launcher.cpp"
+		$File	"..\common\linuxldcompat.cpp" [$LINUX]
 		
 		$File	"StdAfx.cpp"
 		{
@@ -50,5 +52,12 @@ $Project "Vrad_launcher"
 		$File	"$SRCDIR\public\tier1\interface.h"
 		$File	"$SRCDIR\public\ivraddll.h"
 		$File	"StdAfx.h"
+	}
+
+	$Folder "Link Libraries" [$POSIX]
+	{
+		$Lib tier1
+		$ImpLib tier0
+		$ImpLib vstdlib
 	}
 }

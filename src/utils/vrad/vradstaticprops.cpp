@@ -11,16 +11,16 @@
 
 #include "vrad.h"
 #include "mathlib/vector.h"
-#include "UtlBuffer.h"
+#include "utlbuffer.h"
 #include "utlvector.h"
-#include "GameBSPFile.h"
-#include "BSPTreeData.h"
-#include "VPhysics_Interface.h"
-#include "Studio.h"
-#include "Optimize.h"
-#include "Bsplib.h"
-#include "CModel.h"
-#include "PhysDll.h"
+#include "gamebspfile.h"
+#include "bsptreedata.h"
+#include "vphysics_interface.h"
+#include "studio.h"
+#include "optimize.h"
+#include "bsplib.h"
+#include "cmodel.h"
+#include "physdll.h"
 #include "phyfile.h"
 #include "collisionutils.h"
 #include "tier1/KeyValues.h"
@@ -155,20 +155,20 @@ void Rasterizer::Build()
 	const float baseY = mUvStepY / 2.0f;
 
 
-	float fMinX = min(min(mT0.x, mT1.x), mT2.x);
-	float fMinY = min(min(mT0.y, mT1.y), mT2.y);
-	float fMaxX = max(max(mT0.x, mT1.x), mT2.x);
-	float fMaxY = max(max(mT0.y, mT1.y), mT2.y);
+	float fMinX = MIN(MIN(mT0.x, mT1.x), mT2.x);
+	float fMinY = MIN(MIN(mT0.y, mT1.y), mT2.y);
+	float fMaxX = MAX(MAX(mT0.x, mT1.x), mT2.x);
+	float fMaxY = MAX(MAX(mT0.y, mT1.y), mT2.y);
 
 	// Degenerate. Consider warning about these, but otherwise no problem.
 	if (fMinX == fMaxX || fMinY == fMaxY)
 		return;
 
 	// Clamp to 0..1
-	fMinX = max(0, fMinX);
-	fMinY = max(0, fMinY);
-	fMaxX = min(1.0f, fMaxX);
-	fMaxY = min(1.0f, fMaxY);
+	fMinX = MAX(0, fMinX);
+	fMinY = MAX(0, fMinY);
+	fMaxX = MIN(1.0f, fMaxX);
+	fMaxY = MIN(1.0f, fMaxY);
 
 	// We puff the interesting area up by 1 so we can hit an inflated region for the necessary bilerp data.
 	// If we wanted to support better texturing (almost definitely unnecessary), we'd change this to a larger size.
@@ -180,10 +180,10 @@ void Rasterizer::Build()
 	int iMaxY = GetRow(fMaxY) + 1 + kFilterSampleRadius;
 
 	// Clamp to valid texture (integer) locations
-	iMinX = max(0, iMinX);
-	iMinY = max(0, iMinY);
-	iMaxX = min(iMaxX, mResX - 1);
-	iMaxY = min(iMaxY, mResY - 1);
+	iMinX = MAX(0, iMinX);
+	iMinY = MAX(0, iMinY);
+	iMaxX = MIN(iMaxX, mResX - 1);
+	iMaxY = MIN(iMaxY, mResY - 1);
 
 	// Set the size to be as expected. 
 	// TODO: Pass this in from outside to minimize allocations
@@ -779,15 +779,15 @@ public:
 	// HACKHACK: Compute the average coverage for this triangle by sampling the AABB of its texture space
 	float ComputeCoverageForTriangle( int shadowTextureIndex, const Vector2D &t0, const Vector2D &t1, const Vector2D &t2 )
 	{
-		float umin = min(t0.x, t1.x);
-		umin = min(umin, t2.x);
-		float umax = max(t0.x, t1.x);
-		umax = max(umax, t2.x);
+		float umin = MIN(t0.x, t1.x);
+		umin = MIN(umin, t2.x);
+		float umax = MAX(t0.x, t1.x);
+		umax = MAX(umax, t2.x);
 
-		float vmin = min(t0.y, t1.y);
-		vmin = min(vmin, t2.y);
-		float vmax = max(t0.y, t1.y);
-		vmax = max(vmax, t2.y);
+		float vmin = MIN(t0.y, t1.y);
+		vmin = MIN(vmin, t2.y);
+		float vmax = MAX(t0.y, t1.y);
+		vmax = MAX(vmax, t2.y);
 
 		// UNDONE: Do something about tiling
 		umin = clamp(umin, 0, 1);
@@ -1201,7 +1201,7 @@ void ComputeDirectLightingAtPoint( Vector &position, Vector &normal, Vector &out
 		GatherSampleLightSSE( sampleOutput, dl, -1, adjusted_pos4, &normal4, 1, iThread, nLFlags | GATHERLFLAGS_FORCE_FAST,
 		                      static_prop_id_to_skip, flEpsilon );
 		
-		VectorMA( outColor, sampleOutput.m_flFalloff.m128_f32[0] * sampleOutput.m_flDot[0].m128_f32[0], dl->light.intensity, outColor );
+		VectorMA( outColor, FLTX4_ELEMENT( sampleOutput.m_flFalloff, 0 ) * FLTX4_ELEMENT( sampleOutput.m_flDot[0], 0 ), dl->light.intensity, outColor );
 	}
 }
 
@@ -1329,7 +1329,9 @@ void CVradStaticPropMgr::ComputeLighting( CStaticProp &prop, int iThread, int pr
 	const int skip_prop = (g_bDisablePropSelfShadowing || (prop.m_Flags & STATIC_PROP_NO_SELF_SHADOWING)) ? prop_index : -1;
 	const int nFlags = ( prop.m_Flags & STATIC_PROP_IGNORE_NORMALS ) ? GATHERLFLAGS_IGNORE_NORMALS : 0;
 
+#ifdef MPI
 	VMPI_SetCurrentStage( "ComputeLighting" );
+#endif
 
 	matrix3x4_t	matPos, matNormal;
 	AngleMatrix(prop.m_Angles, prop.m_Origin, matPos);
@@ -1655,6 +1657,7 @@ void CVradStaticPropMgr::SerializeLighting()
 	}
 }
 
+#ifdef MPI
 void CVradStaticPropMgr::VMPI_ProcessStaticProp_Static( int iThread, uint64 iStaticProp, MessageBuffer *pBuf )
 {
 	g_StaticPropMgr.VMPI_ProcessStaticProp( iThread, iStaticProp, pBuf );
@@ -1664,11 +1667,13 @@ void CVradStaticPropMgr::VMPI_ReceiveStaticPropResults_Static( uint64 iStaticPro
 {
 	g_StaticPropMgr.VMPI_ReceiveStaticPropResults( iStaticProp, pBuf, iWorker );
 }
+#endif
 	
 //-----------------------------------------------------------------------------
 // Called on workers to do the computation for a static prop and send
 // it to the master.
 //-----------------------------------------------------------------------------
+#ifdef MPI
 void CVradStaticPropMgr::VMPI_ProcessStaticProp( int iThread, int iStaticProp, MessageBuffer *pBuf )
 {
 	// Compute the lighting.
@@ -1700,10 +1705,12 @@ void CVradStaticPropMgr::VMPI_ProcessStaticProp( int iThread, int iStaticProp, M
 		pBuf->write(curList.Base(), curList.Count() * sizeof(colorTexel_t));
 	}
 }
+#endif
 
 //-----------------------------------------------------------------------------
 // Called on the master when a worker finishes processing a static prop.
 //-----------------------------------------------------------------------------
+#ifdef MPI
 void CVradStaticPropMgr::VMPI_ReceiveStaticPropResults( int iStaticProp, MessageBuffer *pBuf, int iWorker )
 {
 	// Read in the results.
@@ -1739,6 +1746,7 @@ void CVradStaticPropMgr::VMPI_ReceiveStaticPropResults( int iStaticProp, Message
 	// Apply the results.
 	ApplyLightingToStaticProp( iStaticProp, m_StaticProps[iStaticProp], &results );
 }
+#endif
 
 
 void CVradStaticPropMgr::ComputeLightingForProp( int iThread, int iStaticProp )
@@ -1780,6 +1788,7 @@ void CVradStaticPropMgr::ComputeLighting( int iThread )
 	// ensure any traces against us are ignored because we have no inherit lighting contribution
 	m_bIgnoreStaticPropTrace = true;
 
+#ifdef MPI
 	if ( g_bUseMPI )
 	{
 		// Distribute the work among the workers.
@@ -1792,6 +1801,7 @@ void CVradStaticPropMgr::ComputeLighting( int iThread )
 			&CVradStaticPropMgr::VMPI_ReceiveStaticPropResults_Static );
 	}
 	else
+#endif
 	{
 		RunThreadsOn(count, true, ThreadComputeStaticPropLighting);
 	}
@@ -2455,8 +2465,8 @@ static int GetTexelCount(unsigned int _resX, unsigned int _resY, bool _mipmaps)
 	while (_resX > 1 || _resY > 1) 
 	{
 		retVal += _resX * _resY;
-		_resX = max(1, _resX >> 1);
-		_resY = max(1, _resY >> 1);
+		_resX = MAX(1, _resX >> 1);
+		_resY = MAX(1, _resY >> 1);
 	}
 
 	// Add in the 1x1 mipmap level, which wasn't hit above. This could be done in the initializer of 
@@ -2582,8 +2592,8 @@ static void FilterCoarserMipmaps(unsigned int _resX, unsigned int _resY, CUtlVec
 
 	int srcResX = _resX;
 	int srcResY = _resY;
-	int dstResX = max(1, (srcResX >> 1));
-	int dstResY = max(1, (srcResY >> 1));
+	int dstResX = MAX(1, (srcResX >> 1));
+	int dstResY = MAX(1, (srcResY >> 1));
 	int dstOffset = GetTexelCount(srcResX, srcResY, false);
 
 	// Build mipmaps here, after being converted to linear space. 
@@ -2618,8 +2628,8 @@ static void FilterCoarserMipmaps(unsigned int _resX, unsigned int _resY, CUtlVec
 
 		srcResX = dstResX;
 		srcResY = dstResY;
-		dstResX = max(1, (srcResX >> 1));
-		dstResY = max(1, (srcResY >> 1));
+		dstResX = MAX(1, (srcResX >> 1));
+		dstResY = MAX(1, (srcResY >> 1));
 		dstOffset += GetTexelCount(srcResX, srcResY, false);
 	}
 }
@@ -2650,8 +2660,8 @@ static void ConvertToDestinationFormat(unsigned int _resX, unsigned int _resY, I
 			srcOffset += GetTexelCount(srcResX, srcResY, false);
 			dstOffset += ImageLoader::GetMemRequired(srcResX, srcResY, 1, _destFmt, false);
 
-			srcResX = max(1, (srcResX >> 1));
-			srcResY = max(1, (srcResY >> 1));
+			srcResX = MAX(1, (srcResX >> 1));
+			srcResY = MAX(1, (srcResY >> 1));
 		}
 
 		// Do the 1x1 level also.

@@ -9,15 +9,26 @@
 //
 
 #include "stdafx.h"
-#include <direct.h>
+
 #include "tier1/strtools.h"
 #include "tier0/icommandline.h"
+
+#include "linuxldcompat.h"
+
+#ifdef _WIN32
+#include <direct.h>
+#endif
+
+#ifdef POSIX
+#include "dlfcn.h"
+#endif
 
 
 char* GetLastErrorString()
 {
 	static char err[2048];
 	
+#ifdef _WIN32
 	LPVOID lpMsgBuf;
 	FormatMessage( 
 		FORMAT_MESSAGE_ALLOCATE_BUFFER | 
@@ -33,6 +44,9 @@ char* GetLastErrorString()
 
 	strncpy( err, (char*)lpMsgBuf, sizeof( err ) );
 	LocalFree( lpMsgBuf );
+#else
+	strncpy( err, dlerror(), sizeof( err ) );
+#endif
 
 	err[ sizeof( err ) - 1 ] = 0;
 
@@ -57,6 +71,10 @@ void MakeFullPath( const char *pIn, char *pOut, int outLen )
 
 int main(int argc, char* argv[])
 {
+#ifdef LINUX
+	AwfulTerribleNoGoodHackToMakeDllLoadingWorkOnLinux(argv);
+#endif
+
 	char dllName[512];
 
 	CommandLine()->CreateCmdLine( argc, argv );
