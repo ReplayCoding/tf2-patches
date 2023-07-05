@@ -21,12 +21,14 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
+#include <limits.h>
 #include <algorithm>
 #include <list>
 #include <vector>
 
 #include <assert.h>
-#ifdef _DEBUG
+#if defined(_DEBUG) && !defined(POSIX)
 #include <crtdbg.h>
 #endif
 
@@ -755,7 +757,7 @@ bool CVertCache::Add(int strip, int vertindex)
     return true;
 }
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && !defined(POSIX)
 //=========================================================================
 // Turn on c runtime leak checking, etc.
 //=========================================================================

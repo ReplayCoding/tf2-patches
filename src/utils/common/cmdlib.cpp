@@ -23,6 +23,7 @@
 #include "filesystem_helpers.h"
 #include "utllinkedlist.h"
 #include "tier0/icommandline.h"
+#include "tier0/threadtools.h"
 #include "KeyValues.h"
 #include "filesystem_tools.h"
 
@@ -61,7 +62,8 @@ CUtlLinkedList<SpewHookFn, unsigned short> g_ExtraSpewHooks;
 bool g_bStopOnExit = false;
 void (*g_ExtraSpewHook)(const char*) = NULL;
 
-#if defined( _WIN32 ) || defined( WIN32 )
+// utterly insane
+#if defined( _WIN32 ) || defined( WIN32 ) || defined( POSIX )
 
 void CmdLib_FPrintf( FileHandle_t hFile, const char *pFormat, ... )
 {
@@ -128,7 +130,7 @@ char* CmdLib_FGets( char *pOut, int outSize, FileHandle_t hFile )
 	return pOut;
 }
 
-#if !defined( _X360 )
+#if !defined( _X360 ) && !defined(POSIX)
 #include <wincon.h>
 #endif
 
@@ -141,7 +143,7 @@ public:
 		if ( g_bStopOnExit )
 		{
 			Warning( "\nPress any key to quit.\n" );
-			getch();
+			getchar();
 		}
 	}
 } g_ExitStopper;
@@ -153,7 +155,7 @@ static unsigned short g_BadColor = 0xFFFF;
 static WORD g_BackgroundFlags = 0xFFFF;
 static void GetInitialColors( )
 {
-#if !defined( _X360 )
+#if !defined( _X360 ) && !defined(POSIX)
 	// Get the old background attributes.
 	CONSOLE_SCREEN_BUFFER_INFO oldInfo;
 	GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &oldInfo );
@@ -175,7 +177,7 @@ static void GetInitialColors( )
 WORD SetConsoleTextColor( int red, int green, int blue, int intensity )
 {
 	WORD ret = g_LastColor;
-#if !defined( _X360 )
+#if !defined( _X360 ) && !defined(POSIX)
 	
 	g_LastColor = 0;
 	if( red )	g_LastColor |= FOREGROUND_RED;
@@ -188,15 +190,23 @@ WORD SetConsoleTextColor( int red, int green, int blue, int intensity )
 		g_LastColor = g_InitialColor;
 
 	SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), g_LastColor | g_BackgroundFlags );
+#elif defined(POSIX)
+	if (red) red = 255;
+	if (green) green = 255;
+	if (blue) blue = 255;
+	printf("\033[38;2;%u;%u;%um", red, green, blue);
+	if (intensity) printf("\033[1m");
 #endif
 	return ret;
 }
 
 void RestoreConsoleTextColor( WORD color )
 {
-#if !defined( _X360 )
+#if !defined( _X360 ) && !defined(POSIX)
 	SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), color | g_BackgroundFlags );
 	g_LastColor = color;
+#elif defined(POSIX)
+	printf("\033[39m\033[22m");
 #endif
 }
 
@@ -216,23 +226,28 @@ void Error( char const *pMsg, ... )
 
 #else
 
-CRITICAL_SECTION g_SpewCS;
+CThreadMutex g_SpewCS;
 bool g_bSpewCSInitted = false;
 bool g_bSuppressPrintfOutput = false;
+
+#ifdef POSIX
+void OutputDebugString( const char* pszMsg ) {
+	// printf("%s", pszMsg );
+}
+#endif
 
 SpewRetval_t CmdLib_SpewOutputFunc( SpewType_t type, char const *pMsg )
 {
 	// Hopefully two threads won't call this simultaneously right at the start!
 	if ( !g_bSpewCSInitted )
 	{
-		InitializeCriticalSection( &g_SpewCS );
 		g_bSpewCSInitted = true;
 	}
 
 	WORD old;
 	SpewRetval_t retVal;
 	
-	EnterCriticalSection( &g_SpewCS );
+	g_SpewCS.Lock();
 	{
 		if (( type == SPEW_MESSAGE ) || (type == SPEW_LOG ))
 		{
@@ -317,7 +332,7 @@ SpewRetval_t CmdLib_SpewOutputFunc( SpewType_t type, char const *pMsg )
 
 		RestoreConsoleTextColor( old );
 	}
-	LeaveCriticalSection( &g_SpewCS );
+	g_SpewCS.Unlock();
 
 	if ( type == SPEW_ERROR )
 	{
@@ -413,7 +428,12 @@ void CmdLib_Cleanup()
 
 void CmdLib_Exit( int exitCode )
 {
+#ifdef _WIN32
 	TerminateProcess( GetCurrentProcess(), 1 );
+#else
+	// does windows not return the exitcode or something?
+	exit( exitCode );
+#endif
 }	
 
 
