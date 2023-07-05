@@ -50,7 +50,9 @@ int		c_chop, c_nochop;
 
 int		active;
 
+#ifdef MPI
 extern bool g_bVMPIEarlyExit;
+#endif
 
 
 void CheckStack (leaf_t *leaf, threaddata_t *thread)
@@ -488,8 +490,10 @@ void RecursiveLeafFlow (int leafnum, threaddata_t *thread, pstack_t *prevstack)
 	// Early-out if we're a VMPI worker that's told to exit. If we don't do this here, then the
 	// worker might spin its wheels for a while on an expensive work unit and not be available to the pool.
 	// This is pretty common in vis.
+#ifdef MPI
 	if ( g_bVMPIEarlyExit )
 		return;
+#endif
 
 	if ( leafnum == g_TraceClusterStop )
 	{

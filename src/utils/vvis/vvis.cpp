@@ -7,7 +7,10 @@
 //=============================================================================//
 // vis.c
 
+#ifdef _WIN32
 #include <windows.h>
+#endif
+
 #include "vis.h"
 #include "threads.h"
 #include "stdlib.h"
@@ -302,11 +305,13 @@ void CalcPortalVis (void)
 	}
 
 
+#ifdef MPI
     if (g_bUseMPI) 
 	{
  		RunMPIPortalFlow();
 	}
 	else 
+#endif
 	{
 		RunThreadsOnIndividual (g_numportals*2, true, PortalFlow);
 	}
@@ -331,11 +336,13 @@ void CalcVis (void)
 {
 	int		i;
 
+#ifdef MPI
 	if (g_bUseMPI) 
 	{
 		RunMPIBasePortalVis();
 	}
 	else 
+#endif
 	{
 	    RunThreadsOnIndividual (g_numportals*2, true, BasePortalVis);
 	}
@@ -413,6 +420,7 @@ void LoadPortals (char *name)
 
 	FILE *f;
 
+#ifdef MPI
 	// Open the portal file.
 	if ( g_bUseMPI )
 	{
@@ -448,6 +456,7 @@ void LoadPortals (char *name)
 		f = fopen( tempFile, "rSTD" ); // read only, sequential, temporary, delete on close
 	}
 	else
+#endif
 	{
 		f = fopen( name, "r" );
 	}
@@ -971,6 +980,7 @@ int ParseCommandLine( int argc, char **argv )
 		// NOTE: the -mpi checks must come last here because they allow the previous argument 
 		// to be -mpi as well. If it game before something else like -game, then if the previous
 		// argument was -mpi and the current argument was something valid like -game, it would skip it.
+#ifdef MPI
 		else if ( !Q_strncasecmp( argv[i], "-mpi", 4 ) || !Q_strncasecmp( argv[i-1], "-mpi", 4 ) )
 		{
 			if ( stricmp( argv[i], "-mpi" ) == 0 )
@@ -980,6 +990,7 @@ int ParseCommandLine( int argc, char **argv )
 			if ( i == argc - 1 )
 				break;
 		}
+#endif
 		else if (argv[i][0] == '-')
 		{
 			Warning("VBSP: Unknown option \"%s\"\n\n", argv[i]);
@@ -1080,10 +1091,10 @@ int RunVVis( int argc, char **argv )
 
 	verbose = false;
 
+	CmdLib_InitFileSystem( argv[ argc - 1 ] );
+
 	LoadCmdLineFromFile( argc, argv, source, "vvis" );
 	int i = ParseCommandLine( argc, argv );
-
-	CmdLib_InitFileSystem( argv[ argc - 1 ] );
 
 	// The ExpandPath is just for VMPI. VMPI's file system needs the basedir in front of all filenames,
 	// so we prepend qdir here.
@@ -1110,6 +1121,7 @@ int RunVVis( int argc, char **argv )
 	start = Plat_FloatTime();
 
 
+#ifdef MPI
 	if (!g_bUseMPI)
 	{
 		// Setup the logfile.
@@ -1117,6 +1129,7 @@ int RunVVis( int argc, char **argv )
 		_snprintf( logFile, sizeof(logFile), "%s.log", source );
 		SetSpewFunctionLogFile( logFile );
 	}
+#endif
 
 	// Run in the background?
 	if( g_bLowPriority )
@@ -1187,10 +1200,12 @@ int RunVVis( int argc, char **argv )
 		{
 			Error("Invalid cluster trace: %d to %d, valid range is 0 to %d\n", g_TraceClusterStart, g_TraceClusterStop, portalclusters-1 );
 		}
+#ifdef MPI
 		if ( g_bUseMPI )
 		{
 			Warning("Can't compile trace in MPI mode\n");
 		}
+#endif
 		CalcVisTrace ();
 		WritePortalTrace(source);
 	}
@@ -1221,12 +1236,14 @@ int main (int argc, char **argv)
 	InstallAllocationFunctions();
 	InstallSpewFunction();
 
+#ifdef MPI
 	VVIS_SetupMPI( argc, argv );
 
 	// Install an exception handler.
 	if ( g_bUseMPI && !g_bMPIMaster )
 		SetupToolsMinidumpHandler( VMPI_ExceptionFilter );
 	else
+#endif
 		SetupDefaultToolsMinidumpHandler();
 
 	return RunVVis( argc, argv );

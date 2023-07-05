@@ -8,18 +8,26 @@
 // vvis_launcher.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
+#ifdef _WIN32
 #include <direct.h>
+#endif
+
+#ifdef POSIX
+#include "dlfcn.h"
+#endif
+
+#include "stdafx.h"
 #include "tier1/strtools.h"
 #include "tier0/icommandline.h"
 #include "ilaunchabledll.h"
 
-
+#include "linuxldcompat.h"
 
 char* GetLastErrorString()
 {
 	static char err[2048];
 	
+#ifdef _WIN32
 	LPVOID lpMsgBuf;
 	FormatMessage( 
 		FORMAT_MESSAGE_ALLOCATE_BUFFER | 
@@ -35,6 +43,9 @@ char* GetLastErrorString()
 
 	strncpy( err, (char*)lpMsgBuf, sizeof( err ) );
 	LocalFree( lpMsgBuf );
+#else
+	strncpy( err, dlerror(), sizeof( err ) );
+#endif
 
 	err[ sizeof( err ) - 1 ] = 0;
 
@@ -44,13 +55,18 @@ char* GetLastErrorString()
 
 int main(int argc, char* argv[])
 {
+#ifdef LINUX
+	AwfulTerribleNoGoodHackToMakeDllLoadingWorkOnLinux(argv);
+#endif
+
 	CommandLine()->CreateCmdLine( argc, argv );
+
 	const char *pDLLName = "vvis_dll.dll";
 	
 	CSysModule *pModule = Sys_LoadModule( pDLLName );
 	if ( !pModule )
 	{
-		printf( "vvis launcher error: can't load %s\n%s", pDLLName, GetLastErrorString() );
+		printf( "vvis launcher error: can't load %s\n", pDLLName );
 		return 1;
 	}
 

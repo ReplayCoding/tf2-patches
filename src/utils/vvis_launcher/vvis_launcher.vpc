@@ -30,6 +30,7 @@ $Project "Vvis_launcher"
 	$Folder	"Source Files"
 	{
 		$File	"vvis_launcher.cpp"
+		$File	"..\common\linuxldcompat.cpp" [$LINUX]
 		
 		$File	"StdAfx.cpp"
 		{
@@ -48,4 +49,12 @@ $Project "Vvis_launcher"
 		$File	"$SRCDIR\public\tier1\interface.h"
 		$File	"StdAfx.h"
 	}
+
+	$Folder "Link Libraries" [$POSIX]
+	{
+		$Lib tier1
+		$ImpLib tier0
+		$ImpLib vstdlib
+	}
+
 }
