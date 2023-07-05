@@ -261,7 +261,7 @@ $Project "fbxutils"
 
 $Project "fgdlib"
 {
-	"fgdlib\fgdlib.vpc" [$WIN32]
+	"fgdlib\fgdlib.vpc"
 }
 
 $Project "FileSystemOpenDialog"
@@ -1292,7 +1292,7 @@ $Project "vaudio_miles"
 
 $Project "vbsp"
 {
-	"utils\vbsp\vbsp.vpc" [$WIN32]
+	"utils\vbsp\vbsp.vpc"
 }
 
 $Project "vbspinfo"
@@ -1483,12 +1483,12 @@ $Project "vpklib"
 
 $Project "vrad_dll"
 {
-	"utils\vrad\vrad_dll.vpc" [$WIN32]
+	"utils\vrad\vrad_dll.vpc"
 }
 
 $Project "vrad_launcher"
 {
-	"utils\vrad_launcher\vrad_launcher.vpc" [$WIN32]
+	"utils\vrad_launcher\vrad_launcher.vpc"
 }
 
 $Project "vs_python2.5"
@@ -1698,7 +1698,7 @@ $Project "vtex_dll"
 
 $Project "vtex_launcher"
 {
-	"utils\vtex\vtex_launcher.vpc" [$WIN32]
+	"utils\vtex\vtex_launcher.vpc" [$WIN32 || $POSIX]
 }
 
 $Project "vtf"
@@ -1723,12 +1723,12 @@ $Project "vtfscrew"
 
 $Project "vvis_dll"
 {
-	"utils\vvis\vvis_dll.vpc" [$WIN32]
+	"utils\vvis\vvis_dll.vpc"
 }
 
 $Project "vvis_launcher"
 {
-	"utils\vvis_launcher\vvis_launcher.vpc" [$WIN32]
+	"utils\vvis_launcher\vvis_launcher.vpc"
 }
 
 $Project "vweightexp"

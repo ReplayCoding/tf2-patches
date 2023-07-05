@@ -112,7 +112,7 @@ DEFINES += -DVPROF_LEVEL=1 -DGNUC -DNO_HOOK_MALLOC
 # Final CFLAGS/CXXFLAGS
 CFLAGS = $(BASE_CFLAGS) $(ENV_CFLAGS)
 CXXFLAGS = $(BASE_CFLAGS) $(BASE_CXXFLAGS) $(ENV_CXXFLAGS)
-LDFLAGS = $(CFLAGS) $(GCC_ExtraLinkerFlags) $(OptimizerLevel)
+LDFLAGS = $(CFLAGS) $(GCC_ExtraLinkerFlags) $(OptimizerLevel) -Wl,-rpath=\$$ORIGIN/
 GENDEP_CXXFLAGS = -MMD -MP -MF $(patsubst %.gch,%.P,$(@:.o=.P)) -MT $@
 MAP_FLAGS =
 Srv_GAMEOUTPUTFILE = 

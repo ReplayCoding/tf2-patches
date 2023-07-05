@@ -582,6 +582,47 @@ $Group "port"
 	// "video_quicktime"
 	// "video_webm"
 	// "video_services"
+
+	"fgdlib"
+	"vbsp"
+	"vrad_dll"
+	"vrad_launcher"
+	"vvis_dll"
+	"vvis_launcher"
+}
+
+// Only build static libs needed for tools, the rest is provided by user
+$Group "toolsport"
+{
+	// Needed for compile, remove these
+	"tier0"
+	"vstdlib"
+
+	"tier1"
+	"tier2"
+	"tier3"
+	"mathlib"
+	"appframework"
+	"dmxloader"
+	"particles"
+	"unitlib"
+	"vtf"
+	"bitmap"
+	"bzip2"
+	"raytrace"
+	"lzma"
+	"vpklib"
+	"fgdlib"
+
+	"vpk"
+	"vbsp"
+	"vtex_dll"
+	"vtex_launcher"
+	"vtf2tga"
+	"vrad_dll"
+	"vrad_launcher"
+	"vvis_dll"
+	"vvis_launcher"
 }
 
 // Abbreviated version of the 'everything' group for Source licensees

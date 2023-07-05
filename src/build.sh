@@ -13,7 +13,7 @@ fi
 MAKE_SRT_FLAGS="NO_CHROOT=1 STEAM_RUNTIME_PATH="
 MAKE_CFG="CFG=release"
 MAKE_VERBOSE=""
-VPC_GROUP="port"
+VPC_GROUP="toolsport"
 CORES=$(nproc)
 # shellcheck disable=SC2155
 export CC="$(pwd)/devtools/bin/linux/ccache gcc"
@@ -46,7 +46,7 @@ while [[ ${1:0:1} == '-' ]]; do
 			VPC_FLAGS+=" /define:CLANG"
 		;;
 		"-s")
-			VPC_GROUP="dedicated"
+			# VPC_GROUP="dedicated"
 			VPC_FLAGS+=" /define:DEDICATED"
 		;;
 		*)
