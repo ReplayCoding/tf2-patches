@@ -73,8 +73,6 @@ build_thirdparty() {
   fi
 }
 
-build_thirdparty "protobuf-2.6.1" "src/.libs/libprotobuf.a"
-build_thirdparty "libedit-3.1" "src/.libs/libedit.a" "-std=c99"
 build_thirdparty "gperftools-2.0" ".libs/libtcmalloc_minimal.so" "-fpermissive -w"
 
 pushd .
@@ -86,9 +84,12 @@ make "-j$CORES" CC="$CC" CXX="$CXX"
 popd
 
 # shellcheck disable=SC2086   # we want arguments to be split
-devtools/bin/vpc_linux /define:WORKSHOP_IMPORT_DISABLE /define:SIXENSE_DISABLE /define:NO_X360_XDK \
-				/define:RAD_TELEMETRY_DISABLED /nofpo /tf ${VPC_FLAGS} "+${VPC_GROUP}" /mksln games
+devtools/bin/vpc_linux /define:RAD_TELEMETRY_DISABLED /nofpo /tf ${VPC_FLAGS} "+${VPC_GROUP}" /mksln games
 
 mkdir -p "../game"
 time make "${MAKE_SRT_FLAGS}" MAKE_VERBOSE="${MAKE_VERBOSE}" ${MAKE_CFG} \
 		MAKE_JOBS="$CORES" -f games.mak "$@"
+
+# HACK: Always use live versions, even in dev
+rm ../game/bin/libtier0.so*
+rm ../game/bin/libvstdlib.so*
