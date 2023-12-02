@@ -16,9 +16,9 @@ MAKE_VERBOSE=""
 VPC_GROUP="port"
 CORES=$(nproc)
 # shellcheck disable=SC2155
-export CC="$(pwd)/devtools/bin/linux/ccache gcc"
+export CC="ccache gcc"
 # shellcheck disable=SC2155
-export CXX="$(pwd)/devtools/bin/linux/ccache g++"
+export CXX="ccache g++"
 export VALVE_NO_AUTO_P4=1
 
 while [[ ${1:0:1} == '-' ]]; do
@@ -40,9 +40,9 @@ while [[ ${1:0:1} == '-' ]]; do
 		;;
 		"-l")
 			# shellcheck disable=SC2155
-			export CC="$(pwd)/devtools/bin/linux/ccache clang"
+			export CC="ccache clang"
 			# shellcheck disable=SC2155
-			export CXX="$(pwd)/devtools/bin/linux/ccache clang++"
+			export CXX="ccache clang++"
 			VPC_FLAGS+=" /define:CLANG"
 		;;
 		"-s")
