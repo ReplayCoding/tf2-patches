@@ -26,9 +26,10 @@
 
 // $macro QUICKTIME_WIN32 1
 
-$Conditional GL "1" [!$DEDICATED && !$WIN32 && !$WIN64]
+$Conditional GL "0"
+$Conditional VK "1" [!$DEDICATED && !$WIN32 && !$WIN64]
 // If we're using OpenGL, we're implicitly using SDL.
-$Macro SDL "1" [$GL && !$DEDICATED]
+$Macro SDL "1" [($GL || $VK) && !$DEDICATED]
 
 $Configuration
 {
@@ -44,7 +45,10 @@ $Configuration
 		$PreprocessorDefinitions		"$BASE;BINK_VIDEO"							[$LINUXALL]
 		
 		$PreprocessorDefinitions		"$BASE;GL_GLEXT_PROTOTYPES;DX_TO_GL_ABSTRACTION"			[$GL]
+		$PreprocessorDefinitions		"$BASE;DXVK"			[$VK]
 		$PreprocessorDefinitions		"$BASE;USE_SDL"										[$SDL]
-                $AdditionalIncludeDirectories		"$BASE;\usr\include\SDL2"					[$SDL || $DEDICATED]
+		$AdditionalIncludeDirectories		"$BASE;\usr\include\SDL2"					[$SDL || $DEDICATED]
+		$AdditionalIncludeDirectories		"$BASE;$SRCDIR\thirdparty\dxvk\include\native\directx"					[$VK]
+		$AdditionalIncludeDirectories		"$BASE;$SRCDIR\thirdparty\dxvk\include\native\windows"					[$VK]
 	}
 }

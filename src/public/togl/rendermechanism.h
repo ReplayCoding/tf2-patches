@@ -52,6 +52,9 @@
 #include "togl/linuxwin/dxabstract.h"
 
 #else
+#ifdef DXVK
+#include "../../thirdparty/dxvk/include/native/directx/d3d9.h"
+#else
 	//USE_ACTUAL_DX
 	#ifdef WIN32
 		#ifdef _X360
@@ -68,6 +71,7 @@
 	#define	GLMPRINTF(args)	
 	#define	GLMPRINTSTR(args)
 	#define	GLMPRINTTEXT(args)
+#endif // DXVK
 #endif // defined(DX_TO_GL_ABSTRACTION)
 
 #endif // RENDERMECHANISM_H
