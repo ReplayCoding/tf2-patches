@@ -57,7 +57,7 @@ while [[ ${1:0:1} == '-' ]]; do
 	shift
 done
 
-build_thirdparty() {
+build_thirdparty_autotools() {
   if [[ ! -f "thirdparty/$1/$2" ]]; then
     pushd .
     cd "thirdparty/$1/"
@@ -73,9 +73,27 @@ build_thirdparty() {
   fi
 }
 
-build_thirdparty "protobuf-2.6.1" "src/.libs/libprotobuf.a"
-build_thirdparty "libedit-3.1" "src/.libs/libedit.a" "-std=c99"
-build_thirdparty "gperftools-2.0" ".libs/libtcmalloc_minimal.so" "-fpermissive -w"
+build_thirdparty_meson() {
+  if [[ ! -f "thirdparty/$1/$2" ]]; then
+    pushd .
+    cd "thirdparty/$1/"
+    local EXTRA_CFLAGS=$3
+    local CFLAGS="-m32 -D_GLIBCXX_USE_CXX11_ABI=0 ${EXTRA_CFLAGS}"
+
+    CFLAGS="${CFLAGS}" \
+    CXXFLAGS="${CFLAGS}" \
+    LDFLAGS="-m32" \
+      meson setup build
+
+    meson compile -C build
+    popd
+  fi
+}
+
+build_thirdparty_autotools "protobuf-2.6.1" "src/.libs/libprotobuf.a"
+build_thirdparty_autotools "libedit-3.1" "src/.libs/libedit.a" "-std=c99"
+build_thirdparty_autotools "gperftools-2.0" ".libs/libtcmalloc_minimal.so" "-fpermissive -w"
+build_thirdparty_meson "dxvk" "build/src/d3d9/libdxvk_d3d9.so"
 
 pushd .
 
