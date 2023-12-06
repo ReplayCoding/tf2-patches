@@ -1481,7 +1481,7 @@ bool CShaderDeviceMgrDx8::ValidateMode( int nAdapter, const ShaderDeviceInfo_t &
 //-----------------------------------------------------------------------------
 int CShaderDeviceMgrDx8::GetVidMemBytes( int nAdapter ) const
 {
-#if defined( _X360 )
+#if defined( _X360 ) || defined (DXVK) // FIXME(replaycoding)
 	return 256*1024*1024;
 #elif defined (DX_TO_GL_ABSTRACTION)
 	D3DADAPTER_IDENTIFIER9 devIndentifier;
@@ -2285,7 +2285,7 @@ bool CShaderDeviceDx8::CreateD3DDevice( void* pHWnd, int nAdapter, const ShaderD
 
 	VD3DHWND hWnd = (VD3DHWND)pHWnd;
 
-#if ( !defined( PIX_INSTRUMENTATION ) && !defined( _X360 ) && !defined( NVPERFHUD ) )
+#if ( !defined( PIX_INSTRUMENTATION ) && !defined( _X360 ) && !defined( NVPERFHUD ) ) && !defined (DXVK)
 	D3DPERF_SetOptions(1);	// Explicitly disallow PIX instrumented profiling in external builds
 #endif
 
@@ -3401,7 +3401,7 @@ void CShaderDeviceDx8::Present()
 		if ( IsPC() && ( m_IsResizing || ( m_ViewHWnd != (VD3DHWND)m_hWnd ) ) )
 		{
 			RECT destRect;
-			#ifndef DX_TO_GL_ABSTRACTION
+			#if !defined( DX_TO_GL_ABSTRACTION ) && !defined ( DXVK )
 					GetClientRect( ( HWND )m_ViewHWnd, &destRect );
 			#else
 					toglGetClientRect( (VD3DHWND)m_ViewHWnd, &destRect );

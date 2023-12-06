@@ -598,9 +598,11 @@ void CSDLMgr::Shutdown()
 {
 	SDLAPP_FUNC;
 
+#ifdef DX_TO_GL_ABSTRACTION
 	if (gGL && m_readFBO)
 		gGL->glDeleteFramebuffersEXT(1, &m_readFBO);
 	m_readFBO = 0;
+#endif
 
 	if ( m_Window )
 	{
@@ -704,6 +706,9 @@ bool CSDLMgr::CreateHiddenGameWindow( const char *pTitle, int width, int height 
 	int flags = SDL_WINDOW_HIDDEN;
 #if defined( DX_TO_GL_ABSTRACTION )
 	flags |= SDL_WINDOW_OPENGL;
+#endif
+#if defined( DXVK )
+	flags |= SDL_WINDOW_VULKAN;
 #endif
 	m_Window = SDL_CreateWindow( pTitle, x, y, width, height,  flags );
 

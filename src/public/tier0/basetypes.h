@@ -128,7 +128,7 @@ T Max( T const &val1, T const &val2 )
 
 #ifndef FALSE
 #define FALSE 0
-#define TRUE (!FALSE)
+#define TRUE 1
 #endif
 
 
@@ -137,7 +137,7 @@ typedef int BOOL;
 #endif
 
 typedef int qboolean;
-typedef unsigned long ULONG;
+typedef uint32_t ULONG;
 typedef unsigned char BYTE;
 typedef unsigned char byte;
 typedef unsigned short word;

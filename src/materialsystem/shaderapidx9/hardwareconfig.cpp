@@ -161,7 +161,7 @@ CHardwareConfig::CHardwareConfig()
 	memset( &m_ActualCaps, 0, sizeof( HardwareCaps_t ) );
 	memset( &m_UnOverriddenCaps, 0, sizeof( HardwareCaps_t ) );
 
-#ifdef POSIX
+#ifdef DX_TO_GL_ABSTRACTION
 		GLMPRINTF((" CHardwareConfig::CHardwareConfig setting m_bHDREnabled to false on %8x", this ));
 #endif
 

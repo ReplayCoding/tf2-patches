@@ -53,7 +53,12 @@
 
 #else
 #ifdef DXVK
-#include "../../thirdparty/dxvk/include/native/directx/d3d9.h"
+#include "d3d9.h"
+#include "togl/dxvksupp.h"
+typedef HWND VD3DHWND;
+#define	GLMPRINTF(args)	
+#define	GLMPRINTSTR(args)
+#define	GLMPRINTTEXT(args)
 #else
 	//USE_ACTUAL_DX
 	#ifdef WIN32

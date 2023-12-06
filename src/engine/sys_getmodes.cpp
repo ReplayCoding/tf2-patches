@@ -1109,8 +1109,8 @@ void CVideoMode_Common::DrawNullBackground( void *hHDC, int w, int h )
 #ifndef _WIN32
 
 typedef unsigned char BYTE;
-typedef signed long LONG;
-typedef unsigned long ULONG;
+typedef int32_t LONG;
+typedef uint32_t ULONG;
 
 typedef char * LPSTR;
 

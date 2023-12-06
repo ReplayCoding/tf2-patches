@@ -112,7 +112,7 @@ typedef char TCHAR;
 #if !defined(HANDLE)
 typedef void * HANDLE;
 #endif
-#define DECLARE_HANDLE(name) typedef struct name##__ { int unused; } *name
+#define DECLARE_HANDLE(name) typedef void *name
 #endif
 DECLARE_HANDLE(HZIP);		// An HZIP identifies a zip file that is being created
 #endif

@@ -309,12 +309,14 @@ static HardwareShader_t CreateD3DVertexShader( DWORD *pByteCode, int numBytes, c
 	#ifdef DX_TO_GL_ABSTRACTION	
 		HRESULT hr = Dx9Device()->CreateVertexShader( pByteCode, (IDirect3DVertexShader9 **)&hShader, pShaderName, debugLabel );
 	#else
+#if !defined(DXVK)
 		if ( IsEmulatingGL() )
 		{
 			DWORD dwVersion = D3DXGetShaderVersion(	pByteCode );
 			REFERENCE( dwVersion );
 			Assert ( D3DSHADER_VERSION_MAJOR( dwVersion ) == 2 );
 		}
+#endif // DXVK
 
 	#if defined(_X360) || !defined(DX_TO_GL_ABSTRACTION)
 		HRESULT hr = Dx9Device()->CreateVertexShader( pByteCode, (IDirect3DVertexShader9 **)&hShader );
@@ -431,12 +433,14 @@ static HardwareShader_t CreateD3DPixelShader( DWORD *pByteCode, unsigned int nCe
 			HRESULT hr = Dx9Device()->CreatePixelShader( pByteCode, ( IDirect3DPixelShader ** )&shader, pShaderName, debugLabel, &nCentroidMask );
 		#endif
 	#else
+#if !defined(DXVK)
 		if ( IsEmulatingGL() )
 		{
 			DWORD dwVersion;
 			dwVersion = D3DXGetShaderVersion( pByteCode );
 			Assert ( D3DSHADER_VERSION_MAJOR( dwVersion ) == 2 );
 		}
+#endif // DXVK
 #if defined(_X360) || !defined(DX_TO_GL_ABSTRACTION)
 		HRESULT hr = Dx9Device()->CreatePixelShader( pByteCode, ( IDirect3DPixelShader ** )&shader );
 #else

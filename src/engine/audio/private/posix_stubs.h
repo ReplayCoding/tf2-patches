@@ -63,7 +63,7 @@ typedef wchar_t BCHAR;
 
 typedef uint MMRESULT;
 typedef uint32 *DWORD_PTR;
-typedef char *LPCSTR;
+typedef const char *LPCSTR;
 typedef uint POINTL;
 
 #define IDLE_PRIORITY_CLASS	1

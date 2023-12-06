@@ -12,6 +12,7 @@
 #endif
 
 #include <stdio.h>
+#include "togl/rendermechanism.h"
 
 enum NormalDecodeMode_t
 {
@@ -19,7 +20,7 @@ enum NormalDecodeMode_t
 };
 
 // Forward declaration
-#ifdef _WIN32
+#if defined( _WIN32 ) || defined (DXVK)
 typedef enum _D3DFORMAT D3DFORMAT;
 #endif
 
@@ -104,7 +105,7 @@ enum ImageFormat
 	NUM_IMAGE_FORMATS
 };
 
-#if defined( POSIX  ) || defined( DX_TO_GL_ABSTRACTION )
+#if !defined(DXVK) && (defined( POSIX  ) || defined( DX_TO_GL_ABSTRACTION ))
 typedef enum _D3DFORMAT
 	{
 		D3DFMT_INDEX16,

@@ -13,6 +13,7 @@
 #include "tier1/utlbuffer.h"
 #include "tier0/icommandline.h"
 #include "tier2/tier2.h"
+#include "appframework/ilaunchermgr.h"
 #include "filesystem.h"
 #include "datacache/idatacache.h"
 #include "shaderapi/ishaderutil.h"
@@ -24,6 +25,11 @@
 #ifdef _X360
 #include "xbox/xbox_win32stubs.h"
 #endif
+
+#if defined( USE_SDL )
+ILauncherMgr *g_pLauncherMgr = NULL;
+#endif
+
 
 //-----------------------------------------------------------------------------
 // Globals
@@ -148,6 +154,10 @@ bool CShaderDeviceMgrBase::Connect( CreateInterfaceFn factory )
 	ConnectTier2Libraries( &actualFactory, 1 );
 	g_pShaderUtil = (IShaderUtil*)ShaderDeviceFactory( SHADER_UTIL_INTERFACE_VERSION, NULL );
 	g_pShaderDeviceMgr = this;
+
+#if defined( USE_SDL )
+	g_pLauncherMgr = (ILauncherMgr *)factory( SDLMGR_INTERFACE_VERSION, NULL );
+#endif
 
 	s_TempFactory = NULL;
 
