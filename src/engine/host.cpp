@@ -3913,7 +3913,7 @@ void Host_PostInit()
 									 "You may have limited glyph support.\n"
 									 "Please install '%s' locale.",
 						en_US, CurrentLocale, en_US );
-		SDL_ShowSimpleMessageBox( 0, "Warning", MessageText, GetAssertDialogParent() );
+		// SDL_ShowSimpleMessageBox( 0, "Warning", MessageText, GetAssertDialogParent() );
 	}
 #endif // LINUX
 
