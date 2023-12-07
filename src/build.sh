@@ -77,6 +77,7 @@ build_thirdparty_meson() {
   if [[ ! -f "thirdparty/$1/$2" ]]; then
     pushd .
     cd "thirdparty/$1/"
+    git submodule update --init
     local EXTRA_CFLAGS=$3
     local CFLAGS="-m32 -D_GLIBCXX_USE_CXX11_ABI=0 ${EXTRA_CFLAGS}"
 
