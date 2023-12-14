@@ -51,3 +51,4 @@ link_dir tf/scripts
 link_glob bin '' 2> >(grep -v "File exists")
 link_glob tf '.vpk'
 link_glob tf '.cache'
+rm bin/libSDL2-2.0.so.0

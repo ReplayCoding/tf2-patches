@@ -83,7 +83,7 @@ build_thirdparty_meson() {
     CFLAGS="${CFLAGS}" \
     CXXFLAGS="${CFLAGS}" \
     LDFLAGS="-m32" \
-      meson setup build
+      meson setup  --buildtype release build
 
     meson compile -C build
     popd
@@ -110,3 +110,4 @@ devtools/bin/vpc_linux /define:WORKSHOP_IMPORT_DISABLE /define:SIXENSE_DISABLE /
 mkdir -p "../game"
 time make "${MAKE_SRT_FLAGS}" MAKE_VERBOSE="${MAKE_VERBOSE}" ${MAKE_CFG} \
 		MAKE_JOBS="$CORES" -f games.mak "$@"
+cp "$PWD/thirdparty/dxvk/build/src/d3d9/libdxvk_d3d9.so" "../game/bin/"
